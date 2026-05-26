@@ -15,4 +15,13 @@ Este es un script de automatización personal para configurar y optimizar una in
 2. Coloca tu archivo comprimido `fuentes.tar.gz` (con tus fuentes `.ttf` en la raíz del comprimido) exactamente al lado del script.
 3. Abre una terminal en la carpeta y otorga permisos de ejecución:
    ```bash
-   chmod +x post-install.sh
+   chmod +x post-install-a.sh
+   chmod +x post-install-b.sh
+5. Ejecuta el primer script:
+   ```bash
+   ./post-install-a.sh
+6. Reinicia el equipo
+7. Ejecuta el segundo script:
+   ```bash
+   ./post-install-b.sh
+8. Listo! Equipo configurado y optimizado!
