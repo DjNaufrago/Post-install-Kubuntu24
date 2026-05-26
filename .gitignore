@@ -1,0 +1,4 @@
+# Ignorar el paquete de fuentes pesadas y protegidas
+fuentes.tar.gz
+fuentes/
+tmp/
