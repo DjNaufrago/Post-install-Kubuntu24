@@ -1,8 +1,18 @@
 # Kubuntu Post-Installation Script (Noble)
 
-Este es un script de automatización personal para configurar y optimizar una instalación limpia de **Kubuntu**. Está diseñado para acelerar el despliegue del sistema, configurar el hardware y dejar el entorno listo para producción.
+Este es un script de automatización personal para configurar y optimizar una instalación limpia de **Kubuntu 24.04**. Está diseñado para acelerar el despliegue del sistema, configurar el hardware y dejar el entorno listo para producción.
 
-## 🚀 Características
+## Hardware
+- **Laptop:** HP Omen 15ce0xx.
+- **GPU 1:** NVIDIA GeForce GTX 1050 Mobile.
+- **GPU 2:** Intel HD Graphics 630.
+- **CPU:** Intel i5-7300HQ (4) @ 3.500GHz.
+- **Memoria:** 16 GB.
+- **Unidad 1:** SSD M.2 Nvme 220 GB.
+- **Unidad 2:** HDD 1 TB 7200 RPM.
+- **Audio device:** Intel Corporation CM238 HD Audio
+
+## 🚀 Características del Script
 - **Actualización:** Automatiza el refresco de repositorios y el upgrade del sistema.
 - **Drivers:** Instala controladores oficiales de NVIDIA y configuraciones PRIME.
 - **Tipografías:** Inyecta de forma local y offline fuentes ClearType modernas (Calibri, Aptos de Office 365) evitando enlaces caídos de internet.
