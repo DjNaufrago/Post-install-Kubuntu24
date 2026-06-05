@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # =====================================================================
-# CONFIGURACIÓN POST-INSTALACIÓN PARA KUBUNTU (Noble)
-# Versión Optimizada Ultra-Rápida (Tira Única)
+# CONFIGURACIÓN POST-INSTALACIÓN PARA KUBUNTU (Noble 24.04)
+# Versión Optimizada Ultra-Rápida (Tira Única) - Edición Plasma 5 (X11)
 # =====================================================================
 
 # Detener el script si ocurre algún error inesperado
@@ -20,7 +20,6 @@ sudo apt purge -y firefox libreoffice* elisa haruna
 sudo snap remove firefox 2>/dev/null || true
 sudo rm -rf /var/snap/firefox /common/firefox ~/snap/firefox
 
-# ¡La primera gran barrida gracias a tu observación!
 echo -e "\n🗑️ Eliminando dependencias huérfanas de los programas purgados..."
 sudo apt autoremove -y
 
@@ -75,7 +74,7 @@ sudo apt upgrade -y
 
 
 # =====================================================================
-# 5. LA GRAN INSTALACIÓN UNIFICADA
+# 5. LA GRAN INSTALACIÓN UNIFICADA (APT Y FLATPAK)
 # =====================================================================
 echo -e "\n🚀 Instalando todo el software del búnker en un solo comando..."
 sudo apt install -y --install-recommends \
@@ -94,12 +93,85 @@ sudo apt install -y --install-recommends \
     rsgain \
     cloudflare-warp
 
-# Configurar Flathub para Discover
+# Configurar Flathub en el sistema
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+echo -e "\n📦 Desplegando batallón de aplicaciones Flatpak..."
+flatpak install flathub org.freac.freac -y
+flatpak install flathub org.onlyoffice.desktopeditors -y
+flatpak install flathub org.kde.haruna -y
+flatpak install flathub org.fooyin.fooyin -y
+flatpak install flathub org.gtk.Gtk3theme.Breeze-Dark//3.22 -y
 
 
 # =====================================================================
-# 6. FUENTES TIPOGRÁFICAS
+# 6. CONFIGURACION DUAL PARA FIREFOX CON NVIDIA
+# =====================================================================
+echo -e "\n🦊 Configurando los motores de Firefox (Normal y Nvidia)..."
+
+# Obtener la ruta del directorio donde está guardado este script
+DIR_ACTUAL="${BASH_SOURCE%/*}"
+
+# Crear directorio de iconos y copiar asegurando la ruta del origen
+mkdir -p ~/.local/share/icons/hicolor/128x128/apps/
+cp "$DIR_ACTUAL/firefox-azul.png" ~/.local/share/icons/hicolor/128x128/apps/lnz-ff-azul.png 2>/dev/null || echo -e "⚠️  ¡Alerta: No se encontró firefox-azul.png en la carpeta del script!"
+
+# Asegurar que la carpeta de aplicaciones locales exista
+mkdir -p ~/.local/share/applications/
+
+echo -e "  └─ 🛠️  Forjando lanzador Firefox Nvidia..."
+echo '[Desktop Entry]
+Version=1.0
+Name=Firefox (Nvidia)
+Comment=Navegador Web con Gráfica Dedicada
+Exec=env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia firefox --class FirefoxNvidia %u
+Icon=lnz-ff-azul
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+StartupWMClass=FirefoxNvidia' | tee ~/.local/share/applications/firefox-nvidia.desktop > /dev/null
+
+echo -e "  └─ 🛠️  Forjando lanzador Firefox Normal..."
+echo '[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Firefox (Normal)
+GenericName=Navegador web
+Comment=Navegador rápido y privado
+Exec=firefox %u
+Icon=firefox
+Terminal=false
+StartupWMClass=firefox
+StartupNotify=true
+Categories=GNOME;GTK;Network;WebBrowser;
+MimeType=application/json;application/pdf;application/rdf+xml;application/rss+xml;application/x-xpinstall;application/xhtml+xml;application/xml;audio/flac;audio/ogg;audio/webm;image/avif;image/gif;image/jpeg;image/png;image/svg+xml;image/webp;text/html;text/xml;video/ogg;video/webm;x-scheme-handler/chrome;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/mailto;
+Actions=new-window;new-private-window;open-profile-manager;
+
+[Desktop Action new-window]
+Exec=firefox --new-window %u
+Name=Nueva ventana
+
+[Desktop Action new-private-window]
+Exec=firefox --private-window %u
+Name=Nueva ventana privada
+
+[Desktop Action open-profile-manager]
+Exec=firefox --ProfileManager
+Name=Abrir administrador de perfiles' | tee ~/.local/share/applications/firefox.desktop > /dev/null
+
+# Eliminar posibles archivos corruptos o duplicados de intentos previos
+rm -f ~/.local/share/applications/firefox-2.desktop
+
+echo -e "  └─ 🧹 Purgando cachés y reiniciando el entorno gráfico en caliente..."
+rm -f ~/.cache/menus/* && rm -f ~/.cache/ksycoca5_*
+kbuildsycoca5 --noincremental > /dev/null 2>&1
+qdbus org.kde.KWin /KWin reconfigure > /dev/null 2>&1
+
+echo -e "✨ ¡Entorno de Firefox optimizado y listo para la acción!"
+
+
+# =====================================================================
+# 7. FUENTES TIPOGRÁFICAS
 # =====================================================================
 echo -e "\n🔤 Configurando fuentes del sistema..."
 
@@ -125,15 +197,15 @@ fi
 
 
 # =====================================================================
-# 7. AJUSTES DEL SISTEMA, PURGA Y LIMPIEZA
+# 8. AJUSTES DEL SISTEMA, PURGA Y LIMPIEZA
 # =====================================================================
-echo -e "\n🛠️ Aplicando cirugías del sistema y eliminando software no deseado..."
+echo -e "\n🛠️ Aplicando cirugías del sistema..."
 
 # Configuración del GRUB para el driver de audio Intel
-sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/ { /snd_intel_dspcfg.dsp_driver=1/! s/"$/ snd_intel_dspcfg.dsp_driver=1"/ }' /etc/default/grub
+sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/ { /snd_intel_dspcfg.dsp_driver=1/! s/.$/ snd_intel_dspcfg.dsp_driver=1&/ }' /etc/default/grub
 sudo update-grub
 
-# Ajustes de usuario para KDE Plasma (Touchpad y Sesión Vacía)
+# Ajustes de usuario nativos para KDE Plasma 5
 kwriteconfig5 --file kservicerc --group Mouse --key TouchpadTapToClick true
 kwriteconfig5 --file ksmserverrc --group General --key loginMode emptySession
 
@@ -142,7 +214,7 @@ sudo fc-cache -f
 
 
 # =====================================================================
-# 8. VERIFICACIÓN FINAL
+# 9. VERIFICACIÓN FINAL Y RECORDATORIOS
 # =====================================================================
 echo "====================================================================="
 echo "    CONFIGURACIÓN COMPLETADA CON ÉXITO     "
@@ -150,6 +222,11 @@ echo "====================================================================="
 echo "Verificación rápida de fuentes:"
 fc-list : family | grep -i "calibri" > /dev/null && echo " -> Calibri: INSTALADA CON ÉXITO" || echo " -> Calibri: No detectada"
 fc-list : family | grep -i "aptos" > /dev/null && echo " -> Aptos: INSTALADA CON ÉXITO" || echo " -> Aptos: No detectada"
+echo "====================================================================="
+echo "🦊 RECORDATORIO IMPORTANTE PARA FIREFOX:"
+echo " Al abrir el navegador, entra en 'about:config' y activa:"
+echo "  1. gfx.webrender.all = true"
+echo "  2. media.hardware-video-decoding.force-enabled = true"
 echo "====================================================================="
 echo "Recomendación: Reinicia el sistema para cargar el nuevo driver"
 echo "de video y los parámetros de audio del GRUB de manera limpia."
