@@ -8,10 +8,11 @@
 # Detener el script si ocurre algún error inesperado
 set -e
 
+
 # =====================================================================
 # 1. FASE DE LIMPIEZA INICIAL (TIERRA ARRASADA)
 # =====================================================================
-echo -e "\\n🧹 Purgando programas no deseados y rastros de Firefox Snap..."
+echo -e "\n🧹 Purgando programas no deseados y rastros de Firefox Snap..."
 # Remover paquetería de oficina, reproductores nativos y el cascarón de Firefox
 sudo apt purge -y firefox libreoffice* elisa haruna
 
@@ -19,14 +20,14 @@ sudo apt purge -y firefox libreoffice* elisa haruna
 sudo snap remove firefox 2>/dev/null || true
 sudo rm -rf /var/snap/firefox /common/firefox ~/snap/firefox
 
-echo -e "\\n🗑️ Eliminando dependencias huérfanas de los programas purgados..."
+echo -e "\n🗑️ Eliminando dependencias huérfanas de los programas purgados..."
 sudo apt autoremove -y
 
 
 # =====================================================================
 # 2. ARQUITECTURA Y DIRECTORIOS BASE
 # =====================================================================
-echo -e "\\n⚙️ Configurando soporte de 32 bits y directorios..."
+echo -e "\n⚙️ Configurando soporte de 32 bits y directorios..."
 sudo dpkg --add-architecture i386
 sudo install -d /etc/apt/keyrings
 
@@ -34,7 +35,7 @@ sudo install -d /etc/apt/keyrings
 # =====================================================================
 # 3. AGREGACIÓN DE REPOSITORIOS, LLAVES Y PRIORIDADES (SIN UPDATES)
 # =====================================================================
-echo -e "\\n📦 Inyectando llaves y fuentes de repositorios..."
+echo -e "\n📦 Inyectando llaves y fuentes de repositorios..."
 
 # A. Cloudflare WARP
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
@@ -59,15 +60,11 @@ Pin-Priority: -1
 wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo tee /etc/apt/keyrings/winehq-archive.key > /dev/null
 echo "deb [signed-by=/etc/apt/keyrings/winehq-archive.key] https://dl.winehq.org/wine-builds/ubuntu/ noble main" | sudo tee /etc/apt/sources.list.d/winehq.list > /dev/null
 
-# D. Audacious PPA (Panda Jim)
-sudo apt install -y software-properties-common
-sudo add-apt-repository -y ppa:ubuntuhandbook1/apps
-
 
 # =====================================================================
 # 4. EL GRAN UPDATE Y UPGRADE GLOBAL
 # =====================================================================
-echo -e "\\n🔄 Sincronizando el nuevo arsenal con internet de un solo viaje..."
+echo -e "\n🔄 Sincronizando el nuevo arsenal con internet de un solo viaje..."
 sudo apt update
 sudo apt upgrade -y
 
@@ -75,7 +72,7 @@ sudo apt upgrade -y
 # =====================================================================
 # 5. LA GRAN INSTALACIÓN UNIFICADA (APT Y FLATPAK)
 # =====================================================================
-echo -e "\\n🚀 Instalando todo el software base vía APT..."
+echo -e "\n🚀 Instalando todo el software base vía APT..."
 sudo apt install -y --install-recommends \
     curl \
     unzip \
@@ -85,8 +82,6 @@ sudo apt install -y --install-recommends \
     flatpak \
     plasma-discover-backend-flatpak \
     winehq-stable \
-    audacious \
-    audacious-plugins \
     nvidia-driver-580 \
     nvidia-prime \
     rsgain \
@@ -98,33 +93,29 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 # ---------------------------------------------------------------------
 # PARCHE DE ENTORNO EN CALIENTE PARA FLATPAK
 # ---------------------------------------------------------------------
-echo -e "\\n🧪 Inyectando variables de entorno Flatpak en caliente..."
-# Alimentamos la sesión actual de Bash con las rutas que el instalador de APT acaba de crear,
-# evitando que el comando falle o que las apps queden invisibles para el refresco del entorno.
+echo -e "\n🧪 Inyectando variables de entorno Flatpak en caliente..."
 export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}:${HOME}/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
 # ---------------------------------------------------------------------
 
-echo -e "\\n📦 Desplegando batallón de aplicaciones Flatpak..."
+echo -e "\n📦 Desplegando batallón de aplicaciones Flatpak..."
 flatpak install flathub org.freac.freac -y
 flatpak install flathub org.onlyoffice.desktopeditors -y
 flatpak install flathub org.kde.haruna -y
 flatpak install flathub org.fooyin.fooyin -y
+flatpak install flathub org.kde.kolourpaint -y
 flatpak install flathub org.gtk.Gtk3theme.Breeze-Dark//3.22 -y
 
 
 # =====================================================================
 # 6. CONFIGURACION DUAL PARA FIREFOX CON NVIDIA
 # =====================================================================
-echo -e "\\n🦊 Configurando los motores de Firefox (Normal y Nvidia)..."
+echo -e "\n🦊 Configurando los motores de Firefox (Normal y Nvidia)..."
 
-# Obtener la ruta del directorio donde está guardado este script
 DIR_ACTUAL="${BASH_SOURCE%/*}"
 
-# Crear directorio de iconos y copiar asegurando la ruta del origen
 mkdir -p ~/.local/share/icons/hicolor/128x128/apps/
 cp "$DIR_ACTUAL/firefox-azul.png" ~/.local/share/icons/hicolor/128x128/apps/lnz-ff-azul.png 2>/dev/null || echo -e "⚠️  ¡Alerta: No se encontró firefox-azul.png en la carpeta del script!"
 
-# Asegurar que la carpeta de aplicaciones locales exista
 mkdir -p ~/.local/share/applications/
 
 echo -e "  └─ 🛠️  Forjando lanzador Firefox Nvidia..."
@@ -167,12 +158,10 @@ Name=Nueva ventana privada
 Exec=firefox --ProfileManager
 Name=Abrir administrador de perfiles' | tee ~/.local/share/applications/firefox.desktop > /dev/null
 
-# Eliminar posibles archivos corruptos o duplicados de intentos previos
 rm -f ~/.local/share/applications/firefox-2.desktop
 
 echo -e "  └─ 🧹 Purgando cachés y reiniciando el entorno gráfico en caliente..."
 rm -f ~/.cache/menus/* && rm -f ~/.cache/ksycoca5_*
-# Usamos las variables en caliente para reconstruir la caché de servicios de KDE incluyendo Flatpak
 XDG_DATA_DIRS="$XDG_DATA_DIRS" kbuildsycoca5 --noincremental > /dev/null 2>&1
 qdbus org.kde.KWin /KWin reconfigure > /dev/null 2>&1
 
@@ -182,16 +171,13 @@ echo -e "✨ ¡Entorno de Firefox optimizado y listo para la acción!"
 # =====================================================================
 # 7. FUENTES TIPOGRÁFICAS
 # =====================================================================
-echo -e "\\n🔤 Configurando fuentes del sistema..."
+echo -e "\n🔤 Configurando fuentes del sistema..."
 
-# Fuentes Clásicas de Microsoft (Aceptando el contrato EULA a ciegas)
 echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
 sudo apt install ttf-mscorefonts-installer -y
 
-# Fuentes de reemplazo métrico y compatibilidad
 sudo apt install fonts-croscore fonts-crosextra-carlito fonts-crosextra-caladea -y
 
-# Inyección local desde tu comprimido fuentes.tar.gz
 if [ -f "./fuentes.tar.gz" ]; then
     echo "    -> Archivo 'fuentes.tar.gz' detectado. Extrayendo..."
     mkdir -p /tmp/pack-fuentes
@@ -208,17 +194,14 @@ fi
 # =====================================================================
 # 8. AJUSTES DEL SISTEMA, PURGA Y LIMPIEZA
 # =====================================================================
-echo -e "\\n🛠️ Aplicando cirugías del sistema..."
+echo -e "\n🛠️ Aplicando cirugías del sistema..."
 
-# Configuración del GRUB para el driver de audio Intel
 sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/ { /snd_intel_dspcfg.dsp_driver=1/! s/.$/ snd_intel_dspcfg.dsp_driver=1&/ }' /etc/default/grub
 sudo update-grub
 
-# Ajustes de usuario nativos para KDE Plasma 5
 kwriteconfig5 --file kservicerc --group Mouse --key TouchpadTapToClick true
 kwriteconfig5 --file ksmserverrc --group General --key loginMode emptySession
 
-# Actualizar la caché de fuentes
 sudo fc-cache -f
 
 

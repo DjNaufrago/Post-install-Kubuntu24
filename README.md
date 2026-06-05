@@ -23,27 +23,22 @@ A fin de instalar una distro Linux en mi laptop de trabajo, probé Fedora, Mint,
 - **Tipografías:** Inyecta de forma local y offline fuentes ClearType modernas (Calibri, Aptos de Office 365) evitando enlaces caídos de internet.
 - **Software:**   + Configura Flatpak (Flathub)
                   + Configura e instala WARP desde los respositorios de Cloudflare
-                  + Configura e instala Audacious desde los repositorios PPA
                   + Configura e instala Firefox desde los servidores de Mozilla
                   + Instala el normalizador de audio `rsgain`
                   + Remueve bloatware (LibreOffice, Elisa, Haruna (version nativa obsoleta))
-                  + Instala desde flatpak las ultimas versiones de Haruna, Fre:ac y OnlyOffice
-                  + Instala Wine desde los repositorios WineHQ  
+                  + Instala desde flatpak las ultimas versiones de Haruna, Fre:ac, OnlyOffice y KolourPaint
+                  + Instala Wine desde los repositorios WineHQ
+                  + Crea una instancia adicional en el menú para Firefox corriendo con Nvidia (icono zul)
 - **Tweaks de Sistema:** Activa el *Tap-to-click* en el Touchpad y fuerza el apagado limpio mediante sesión vacía en KDE Plasma.
 
 ## 🛠️ Modo de Uso
 
-1. Clona este repositorio o descarga el script `post-install-a.sh` y `post-install-b.sh`.
+1. Clona este repositorio o descarga el script `post-install.sh` junto con la imagen firefox-azul.png.
 2. Coloca tu archivo comprimido `fuentes.tar.gz` (con tus fuentes `.ttf` en la raíz del comprimido) exactamente al lado del script.
 3. Abre una terminal en la carpeta y otorga permisos de ejecución:
    ```bash
-   chmod +x post-install-a.sh
-   chmod +x post-install-b.sh
-5. Ejecuta el primer script:
+   chmod +x post-install.sh
+4. Ejecuta el script:
    ```bash
-   ./post-install-a.sh
-6. Reinicia el equipo
-7. Ejecuta el segundo script:
-   ```bash
-   ./post-install-b.sh
-8. Listo! Equipo configurado y optimizado!
+   ./post-install.sh
+5. Listo! Equipo configurado y optimizado!
