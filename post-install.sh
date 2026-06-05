@@ -8,11 +8,10 @@
 # Detener el script si ocurre algún error inesperado
 set -e
 
-
 # =====================================================================
 # 1. FASE DE LIMPIEZA INICIAL (TIERRA ARRASADA)
 # =====================================================================
-echo -e "\n🧹 Purgando programas no deseados y rastros de Firefox Snap..."
+echo -e "\\n🧹 Purgando programas no deseados y rastros de Firefox Snap..."
 # Remover paquetería de oficina, reproductores nativos y el cascarón de Firefox
 sudo apt purge -y firefox libreoffice* elisa haruna
 
@@ -20,14 +19,14 @@ sudo apt purge -y firefox libreoffice* elisa haruna
 sudo snap remove firefox 2>/dev/null || true
 sudo rm -rf /var/snap/firefox /common/firefox ~/snap/firefox
 
-echo -e "\n🗑️ Eliminando dependencias huérfanas de los programas purgados..."
+echo -e "\\n🗑️ Eliminando dependencias huérfanas de los programas purgados..."
 sudo apt autoremove -y
 
 
 # =====================================================================
 # 2. ARQUITECTURA Y DIRECTORIOS BASE
 # =====================================================================
-echo -e "\n⚙️ Configurando soporte de 32 bits y directorios..."
+echo -e "\\n⚙️ Configurando soporte de 32 bits y directorios..."
 sudo dpkg --add-architecture i386
 sudo install -d /etc/apt/keyrings
 
@@ -35,7 +34,7 @@ sudo install -d /etc/apt/keyrings
 # =====================================================================
 # 3. AGREGACIÓN DE REPOSITORIOS, LLAVES Y PRIORIDADES (SIN UPDATES)
 # =====================================================================
-echo -e "\n📦 Inyectando llaves y fuentes de repositorios..."
+echo -e "\\n📦 Inyectando llaves y fuentes de repositorios..."
 
 # A. Cloudflare WARP
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
@@ -68,7 +67,7 @@ sudo add-apt-repository -y ppa:ubuntuhandbook1/apps
 # =====================================================================
 # 4. EL GRAN UPDATE Y UPGRADE GLOBAL
 # =====================================================================
-echo -e "\n🔄 Sincronizando el nuevo arsenal con internet de un solo viaje..."
+echo -e "\\n🔄 Sincronizando el nuevo arsenal con internet de un solo viaje..."
 sudo apt update
 sudo apt upgrade -y
 
@@ -76,7 +75,7 @@ sudo apt upgrade -y
 # =====================================================================
 # 5. LA GRAN INSTALACIÓN UNIFICADA (APT Y FLATPAK)
 # =====================================================================
-echo -e "\n🚀 Instalando todo el software del búnker en un solo comando..."
+echo -e "\\n🚀 Instalando todo el software base vía APT..."
 sudo apt install -y --install-recommends \
     curl \
     unzip \
@@ -96,7 +95,16 @@ sudo apt install -y --install-recommends \
 # Configurar Flathub en el sistema
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-echo -e "\n📦 Desplegando batallón de aplicaciones Flatpak..."
+# ---------------------------------------------------------------------
+# PARCHE DE ENTORNO EN CALIENTE PARA FLATPAK
+# ---------------------------------------------------------------------
+echo -e "\\n🧪 Inyectando variables de entorno Flatpak en caliente..."
+# Alimentamos la sesión actual de Bash con las rutas que el instalador de APT acaba de crear,
+# evitando que el comando falle o que las apps queden invisibles para el refresco del entorno.
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}:${HOME}/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
+# ---------------------------------------------------------------------
+
+echo -e "\\n📦 Desplegando batallón de aplicaciones Flatpak..."
 flatpak install flathub org.freac.freac -y
 flatpak install flathub org.onlyoffice.desktopeditors -y
 flatpak install flathub org.kde.haruna -y
@@ -107,7 +115,7 @@ flatpak install flathub org.gtk.Gtk3theme.Breeze-Dark//3.22 -y
 # =====================================================================
 # 6. CONFIGURACION DUAL PARA FIREFOX CON NVIDIA
 # =====================================================================
-echo -e "\n🦊 Configurando los motores de Firefox (Normal y Nvidia)..."
+echo -e "\\n🦊 Configurando los motores de Firefox (Normal y Nvidia)..."
 
 # Obtener la ruta del directorio donde está guardado este script
 DIR_ACTUAL="${BASH_SOURCE%/*}"
@@ -164,7 +172,8 @@ rm -f ~/.local/share/applications/firefox-2.desktop
 
 echo -e "  └─ 🧹 Purgando cachés y reiniciando el entorno gráfico en caliente..."
 rm -f ~/.cache/menus/* && rm -f ~/.cache/ksycoca5_*
-kbuildsycoca5 --noincremental > /dev/null 2>&1
+# Usamos las variables en caliente para reconstruir la caché de servicios de KDE incluyendo Flatpak
+XDG_DATA_DIRS="$XDG_DATA_DIRS" kbuildsycoca5 --noincremental > /dev/null 2>&1
 qdbus org.kde.KWin /KWin reconfigure > /dev/null 2>&1
 
 echo -e "✨ ¡Entorno de Firefox optimizado y listo para la acción!"
@@ -173,7 +182,7 @@ echo -e "✨ ¡Entorno de Firefox optimizado y listo para la acción!"
 # =====================================================================
 # 7. FUENTES TIPOGRÁFICAS
 # =====================================================================
-echo -e "\n🔤 Configurando fuentes del sistema..."
+echo -e "\\n🔤 Configurando fuentes del sistema..."
 
 # Fuentes Clásicas de Microsoft (Aceptando el contrato EULA a ciegas)
 echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
@@ -199,7 +208,7 @@ fi
 # =====================================================================
 # 8. AJUSTES DEL SISTEMA, PURGA Y LIMPIEZA
 # =====================================================================
-echo -e "\n🛠️ Aplicando cirugías del sistema..."
+echo -e "\\n🛠️ Aplicando cirugías del sistema..."
 
 # Configuración del GRUB para el driver de audio Intel
 sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/ { /snd_intel_dspcfg.dsp_driver=1/! s/.$/ snd_intel_dspcfg.dsp_driver=1&/ }' /etc/default/grub
@@ -228,6 +237,7 @@ echo " Al abrir el navegador, entra en 'about:config' y activa:"
 echo "  1. gfx.webrender.all = true"
 echo "  2. media.hardware-video-decoding.force-enabled = true"
 echo "====================================================================="
-echo "Recomendación: Reinicia el sistema para cargar el nuevo driver"
-echo "de video y los parámetros de audio del GRUB de manera limpia."
+echo "Recomendación: ¡Reinicia el sistema completo ahora!"
+echo " Esto cargará el driver Nvidia, el audio en el GRUB y asentará"
+echo " de forma permanente las rutas de Flatpak en los menús de KDE."
 echo "====================================================================="
