@@ -22,14 +22,14 @@ A fin de instalar una distro Linux en mi laptop de trabajo, probé Fedora, Mint,
 - **Drivers:** Instala controladores oficiales de NVIDIA y configuraciones PRIME.
 - **Tipografías:** Inyecta de forma local y offline fuentes ClearType modernas (Calibri, Aptos de Office 365) evitando enlaces caídos de internet.
 - **Software:**
-    - Configura Flatpak (Flathub)
+    - Configura Flatpak (Flathub) e instala las últimas versiones de Haruna, Fre:ac, OnlyOffice y KolourPaint
     - Configura e instala WARP desde los repositorios de Cloudflare
     - Configura e instala Firefox desde los servidores de Mozilla
     - Instala el normalizador de audio `rsgain`
     - Remueve bloatware (LibreOffice, Elisa, Haruna (versión nativa obsoleta))
-    - Instala desde flatpak las últimas versiones de Haruna, Fre:ac, OnlyOffice y KolourPaint
     - Instala Wine desde los repositorios WineHQ
     - Crea una instancia adicional en el menú para Firefox corriendo con Nvidia (icono azul)
+- **Audio:** Se agrega el modulo de sonido al grub para forzar la detección.
 - **Tweaks de Sistema:** Activa el *Tap-to-click* en el Touchpad y fuerza el apagado limpio mediante sesión vacía en KDE Plasma.
 
 ## 🛠️ Modo de Uso

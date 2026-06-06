@@ -10,6 +10,14 @@ set -e
 
 
 # =====================================================================
+# 0. INSTALACIÓN DE PRE-REQUISITOS ESENCIALES
+# =====================================================================
+echo -e "\n🛠️ Instalando herramientas de red críticas (curl/wget)..."
+sudo apt update
+sudo apt install -y curl wget
+
+
+# =====================================================================
 # 1. FASE DE LIMPIEZA INICIAL (TIERRA ARRASADA)
 # =====================================================================
 echo -e "\n🧹 Purgando programas no deseados y rastros de Firefox Snap..."
@@ -74,7 +82,7 @@ sudo apt upgrade -y
 # =====================================================================
 echo -e "\n🚀 Instalando todo el software base vía APT..."
 sudo apt install -y --install-recommends \
-    curl \
+    rar \
     unzip \
     unrar \
     firefox \
